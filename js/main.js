@@ -3,6 +3,7 @@
 
   var dict = {
     en: {
+      "skip": "Skip to content",
       "hero.eyebrow": "Juiz de Fora, Brazil — Remote",
       "hero.role": "Senior Software Engineer · AI-Powered Data Migration · ETL Architecture",
       "about.eyebrow": "About",
@@ -17,6 +18,7 @@
       "contact.title": "Open to remote<br>opportunities"
     },
     pt: {
+      "skip": "Pular para o conteúdo",
       "hero.eyebrow": "Juiz de Fora, Brasil — Remoto",
       "hero.role": "Engenheiro de Software Sênior · Migração de Dados com IA · Arquitetura ETL",
       "about.eyebrow": "Sobre",
