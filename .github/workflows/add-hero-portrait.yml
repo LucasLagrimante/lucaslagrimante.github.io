@@ -1,0 +1,138 @@
+name: Add hero portrait
+
+on:
+  push:
+    paths:
+      - ".github/workflows/add-hero-portrait.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add portrait to hero
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import base64
+
+          html_path = Path("index.html")
+          html = html_path.read_text(encoding="utf-8")
+          canvas = '      <canvas id="particles" aria-hidden="true"></canvas>\n'
+          portrait = '''      <figure class="hero-portrait" aria-hidden="true">
+                <img src="assets/lucas-portrait.webp" alt="">
+                <figcaption><span>PROFILE / 01</span><span>LL</span></figcaption>
+              </figure>
+          '''
+          if 'class="hero-portrait"' not in html:
+              if canvas not in html:
+                  raise SystemExit("Hero canvas anchor not found")
+              html = html.replace(canvas, canvas + portrait, 1)
+              html_path.write_text(html, encoding="utf-8")
+
+          css_path = Path("css/style.css")
+          css = css_path.read_text(encoding="utf-8")
+          styles = r'''
+
+          /* Hero portrait */
+          .hero-portrait {
+            position: absolute;
+            z-index: 4;
+            right: clamp(0.9rem, 2.2vw, 1.4rem);
+            bottom: 2.55rem;
+            width: clamp(150px, 32%, 220px);
+            aspect-ratio: 4 / 5;
+            margin: 0;
+            overflow: hidden;
+            border: 1px solid rgba(240, 244, 237, 0.2);
+            background: var(--bg);
+            box-shadow: 0 22px 55px rgba(0, 0, 0, 0.46), 0 0 0 1px rgba(200, 255, 98, 0.06);
+            pointer-events: none;
+          }
+
+          .hero-portrait::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: linear-gradient(180deg, transparent 58%, rgba(8, 10, 9, 0.78) 100%);
+            box-shadow: inset 0 0 0 1px rgba(8, 10, 9, 0.34);
+          }
+
+          .hero-portrait::after {
+            content: "";
+            position: absolute;
+            z-index: 3;
+            top: -1px;
+            right: -1px;
+            width: 2rem;
+            height: 2rem;
+            border-top: 2px solid var(--accent);
+            border-right: 2px solid var(--accent);
+          }
+
+          .hero-portrait img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: 50% 38%;
+            filter: saturate(0.86) contrast(1.04);
+          }
+
+          .hero-portrait figcaption {
+            position: absolute;
+            z-index: 3;
+            left: 0.65rem;
+            right: 0.65rem;
+            bottom: 0.55rem;
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            color: rgba(240, 244, 237, 0.72);
+            font-family: var(--font-mono);
+            font-size: 0.48rem;
+            letter-spacing: 0.12em;
+            line-height: 1;
+            text-transform: uppercase;
+          }
+
+          @media (max-width: 980px) {
+            .hero-portrait {
+              width: min(31vw, 190px);
+              right: 1rem;
+              bottom: 2.45rem;
+            }
+          }
+
+          @media (max-width: 640px) {
+            .hero-portrait {
+              width: min(34vw, 132px);
+              top: 2.65rem;
+              right: 0.7rem;
+              bottom: auto;
+            }
+
+            .hero-portrait figcaption span:first-child { display: none; }
+          }
+          '''
+          if "/* Hero portrait */" not in css:
+              css_path.write_text(css + styles, encoding="utf-8")
+
+          portrait_data = """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"""
+          Path("assets/lucas-portrait.webp").write_bytes(base64.b64decode(portrait_data))
+          PY
+
+      - name: Commit portrait
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html css/style.css assets/lucas-portrait.webp
+          git diff --cached --quiet || git commit -m "Add portrait to portfolio hero"
+          git push
