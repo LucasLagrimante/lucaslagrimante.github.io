@@ -2,262 +2,230 @@
   "use strict";
 
   var canvas = document.getElementById("particles");
+  var stage = document.getElementById("graph-stage");
+  var mode = document.getElementById("graph-mode");
   var ctx = canvas.getContext("2d");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var W = 0, H = 0, DPR = 1, raf = null;
+  var pointer = { x: 0, y: 0, active: false, down: false };
 
-  var W = 0, H = 0, DPR = 1;
-  var particles = [];
-  // O mouse é suavizado (smx/smy perseguem x/y) para que a influência
-  // nas partículas nunca dê saltos bruscos
-  var mouse = { x: -9999, y: -9999, smx: -9999, smy: -9999, active: false, strength: 0 };
-  var scrollProgress = 0;
-  var smoothScroll = 0;
-  var docHeight = 1;
-  var running = true;
-  var rafId = null;
-  var time = 0;
+  var definitions = [
+    { label: "DATA", x: .24, y: .32, cluster: 0, core: true },
+    { label: "ETL", x: .09, y: .16, cluster: 0 },
+    { label: "POSTGRES", x: .10, y: .43, cluster: 0 },
+    { label: "500K+", x: .33, y: .13, cluster: 0 },
+    { label: "MIGRATION", x: .39, y: .39, cluster: 0 },
+    { label: "AI", x: .72, y: .25, cluster: 1, core: true },
+    { label: "MCP", x: .58, y: .09, cluster: 1 },
+    { label: "CLAUDE", x: .86, y: .10, cluster: 1 },
+    { label: "GEMINI", x: .89, y: .34, cluster: 1 },
+    { label: "AUTOMATION", x: .57, y: .37, cluster: 1 },
+    { label: "SYSTEMS", x: .28, y: .72, cluster: 2, core: true },
+    { label: "LARAVEL", x: .09, y: .61, cluster: 2 },
+    { label: "APIs", x: .13, y: .84, cluster: 2 },
+    { label: "PIX", x: .40, y: .87, cluster: 2 },
+    { label: "13+", x: .46, y: .65, cluster: 2 },
+    { label: "PRODUCT", x: .73, y: .70, cluster: 3, core: true },
+    { label: "REACT", x: .59, y: .57, cluster: 3 },
+    { label: "SUPABASE", x: .88, y: .56, cluster: 3 },
+    { label: "FINTECH", x: .89, y: .83, cluster: 3 },
+    { label: "MOBILE", x: .61, y: .87, cluster: 3 }
+  ];
 
-  var COLORS = ["#c0a5f3", "#f2a2b5", "#8f89c9"];
-  var LINK_DIST = 110;
+  var nodes = definitions.map(function (definition, index) {
+    return {
+      label: definition.label,
+      cluster: definition.cluster,
+      core: !!definition.core,
+      nx: definition.x,
+      ny: definition.y,
+      x: 0,
+      y: 0,
+      hx: 0,
+      hy: 0,
+      vx: 0,
+      vy: 0,
+      phase: index * 1.73
+    };
+  });
 
-  function particleCount() {
-    return W < 640 ? 45 : W < 1100 ? 75 : 110;
-  }
-
-  // Três formações: hero (órbita dispersa), pipeline (fluxo em faixas), grade
-  var formations = { orbit: [], flow: [], grid: [] };
-
-  function buildFormations() {
-    var n = particleCount();
-    formations.orbit = [];
-    formations.flow = [];
-    formations.grid = [];
-
-    var cx = W / 2, cy = H / 2;
-    var maxR = Math.min(W, H) * 0.42;
-
-    for (var i = 0; i < n; i++) {
-      var angle = (i / n) * Math.PI * 2 * 3.1;
-      var r = maxR * (0.15 + 0.85 * ((i * 2654435761) % 1000) / 1000);
-      formations.orbit.push({
-        x: cx + Math.cos(angle) * r,
-        y: cy + Math.sin(angle) * r
-      });
-
-      var lane = i % 8;
-      formations.flow.push({
-        x: (i / n) * W * 1.4 - W * 0.2,
-        y: (H / 9) * (lane + 1) + (Math.sin(i) * 18)
-      });
-
-      var cols = Math.ceil(Math.sqrt(n * (W / H)));
-      var col = i % cols;
-      var row = Math.floor(i / cols);
-      var rows = Math.ceil(n / cols);
-      var gapX = W / (cols + 1);
-      var gapY = H / (rows + 1);
-      formations.grid.push({
-        x: gapX * (col + 1),
-        y: gapY * (row + 1)
-      });
-    }
-  }
-
-  function rebuildParticles() {
-    var n = particleCount();
-    particles = [];
-    for (var i = 0; i < n; i++) {
-      particles.push({
-        x: formations.orbit[i] ? formations.orbit[i].x : Math.random() * W,
-        y: formations.orbit[i] ? formations.orbit[i].y : Math.random() * H,
-        vx: 0,
-        vy: 0,
-        r: 1 + Math.random() * 1.6,
-        color: COLORS[i % COLORS.length],
-        phase: Math.random() * Math.PI * 2,
-        // amplitude e frequência próprias do drift orgânico em volta do "lar"
-        driftA: 8 + Math.random() * 14,
-        driftF: 0.00035 + Math.random() * 0.00045,
-        idx: i
-      });
-    }
-  }
+  var links = [];
+  definitions.forEach(function (node, index) {
+    if (node.core) return;
+    var coreIndex = definitions.findIndex(function (candidate) {
+      return candidate.cluster === node.cluster && candidate.core;
+    });
+    links.push([coreIndex, index]);
+  });
+  links.push([0, 5], [0, 10], [5, 15], [10, 15], [0, 15], [5, 10]);
 
   function resize() {
+    var rect = stage.getBoundingClientRect();
     DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
+    W = Math.max(1, rect.width);
+    H = Math.max(1, rect.height);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    docHeight = Math.max(document.body.scrollHeight - H, 1);
-    buildFormations();
-    rebuildParticles();
-    if (reduceMotion) seedStatic();
-  }
 
-  function seedStatic() {
-    ctx.clearRect(0, 0, W, H);
-    for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      ctx.beginPath();
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = 0.5;
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
-
-  // "Lar" da partícula: mistura das formações conforme o scroll,
-  // mais um drift senoidal individual para o repouso nunca ficar estático
-  function homeFor(p, t) {
-    var s = smoothScroll;
-    var a, b, mix;
-    if (s < 0.5) {
-      a = formations.orbit[p.idx];
-      b = formations.flow[p.idx];
-      mix = s / 0.5;
-    } else {
-      a = formations.flow[p.idx];
-      b = formations.grid[p.idx];
-      mix = (s - 0.5) / 0.5;
-    }
-    if (!a || !b) return { x: p.x, y: p.y };
-    // easing na mistura para a transição entre formações ser mais orgânica
-    mix = mix * mix * (3 - 2 * mix);
-    return {
-      x: a.x + (b.x - a.x) * mix + Math.cos(t * p.driftF + p.phase) * p.driftA,
-      y: a.y + (b.y - a.y) * mix + Math.sin(t * p.driftF * 1.3 + p.phase) * p.driftA
-    };
-  }
-
-  function drawLinks() {
-    ctx.lineWidth = 0.5;
-    for (var i = 0; i < particles.length; i++) {
-      var a = particles[i];
-      for (var j = i + 1; j < particles.length; j++) {
-        var b = particles[j];
-        var dx = a.x - b.x;
-        var dy = a.y - b.y;
-        var d2 = dx * dx + dy * dy;
-        if (d2 < LINK_DIST * LINK_DIST) {
-          ctx.globalAlpha = (1 - Math.sqrt(d2) / LINK_DIST) * 0.12;
-          ctx.strokeStyle = "#c0a5f3";
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
+    nodes.forEach(function (node) {
+      node.hx = node.nx * W;
+      node.hy = node.ny * H;
+      if (!node.x && !node.y) {
+        node.x = node.hx;
+        node.y = node.hy;
       }
-    }
-    ctx.globalAlpha = 1;
+    });
+    draw(performance.now(), false);
   }
 
-  function tick(now) {
-    if (!running) return;
-    time = now || 0;
+  function drawLink(a, b, time, index) {
+    var dx = b.x - a.x;
+    var dy = b.y - a.y;
+    var pointerDistance = Math.hypot((a.x + b.x) / 2 - pointer.x, (a.y + b.y) / 2 - pointer.y);
+    var engaged = pointer.active && pointerDistance < 130;
 
-    scrollProgress = Math.min(window.scrollY / docHeight, 1);
-    // o scroll "sentido" persegue o real: a formação muda sem trancos
-    smoothScroll += (scrollProgress - smoothScroll) * 0.04;
+    ctx.strokeStyle = engaged ? "rgba(200,255,98,.52)" : "rgba(240,244,237,.13)";
+    ctx.lineWidth = engaged ? 1.1 : .65;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
 
-    mouse.smx += (mouse.x - mouse.smx) * 0.08;
-    mouse.smy += (mouse.y - mouse.smy) * 0.08;
-    mouse.strength += ((mouse.active ? 1 : 0) - mouse.strength) * 0.05;
+    var progress = ((time * .00008 * (index % 3 + 1)) + index * .17) % 1;
+    ctx.fillStyle = engaged ? "#c8ff62" : "rgba(157,255,220,.65)";
+    ctx.beginPath();
+    ctx.arc(a.x + dx * progress, a.y + dy * progress, engaged ? 2.1 : 1.25, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
+  function drawNode(node, time, nearest) {
+    var energy = .5 + Math.sin(time * .0012 + node.phase) * .12;
+    var highlighted = node === nearest;
+    var radius = node.core ? 6 : highlighted ? 4.2 : 2.6;
+
+    if (node.core || highlighted) {
+      ctx.strokeStyle = highlighted ? "rgba(200,255,98,.72)" : "rgba(200,255,98,.25)";
+      ctx.lineWidth = .8;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, radius + (node.core ? 7 : 5) + energy * 2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = node.core || highlighted ? "#c8ff62" : "rgba(240,244,237," + energy + ")";
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (node.core || highlighted) {
+      ctx.font = (node.core ? "600 10px" : "500 9px") + " 'JetBrains Mono', monospace";
+      ctx.fillStyle = node.core ? "rgba(240,244,237,.9)" : "rgba(200,255,98,.92)";
+      ctx.textAlign = "left";
+      ctx.fillText(node.label, node.x + radius + 10, node.y + 3);
+    }
+  }
+
+  function draw(time, scheduleNext) {
     ctx.clearRect(0, 0, W, H);
-    drawLinks();
+    var nearest = null;
+    var nearestDistance = 86;
 
-    for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      var home = homeFor(p, time);
+    nodes.forEach(function (node) {
+      if (reduceMotion) {
+        node.x = node.hx;
+        node.y = node.hy;
+        return;
+      }
 
-      // mola fraca de retorno ao lar: as partículas voltam devagar,
-      // sem o efeito de "ímã" da versão anterior
-      p.vx += (home.x - p.x) * 0.0035;
-      p.vy += (home.y - p.y) * 0.0035;
+      var driftX = Math.cos(time * .00025 + node.phase) * (node.core ? 2 : 5);
+      var driftY = Math.sin(time * .00031 + node.phase) * (node.core ? 2 : 5);
+      node.vx += (node.hx + driftX - node.x) * .012;
+      node.vy += (node.hy + driftY - node.y) * .012;
 
-      if (mouse.strength > 0.01) {
-        var mdx = p.x - mouse.smx;
-        var mdy = p.y - mouse.smy;
-        var distSq = mdx * mdx + mdy * mdy;
-        var radius = 160;
-        if (distSq < radius * radius && distSq > 0.01) {
-          var dist = Math.sqrt(distSq);
-          // queda quadrática suave em vez de linear: sem "parede" dura
-          var falloff = 1 - dist / radius;
-          var force = falloff * falloff * 0.5 * mouse.strength;
-          p.vx += (mdx / dist) * force;
-          p.vy += (mdy / dist) * force;
+      if (pointer.active) {
+        var dx = node.x - pointer.x;
+        var dy = node.y - pointer.y;
+        var distance = Math.sqrt(dx * dx + dy * dy) || 1;
+        var radius = pointer.down ? 210 : 135;
+        if (distance < radius) {
+          var falloff = Math.pow(1 - distance / radius, 2);
+          var force = (pointer.down ? -1.1 : .72) * falloff;
+          node.vx += dx / distance * force;
+          node.vy += dy / distance * force;
         }
       }
 
-      p.vx *= 0.94;
-      p.vy *= 0.94;
-      p.x += p.vx;
-      p.y += p.vy;
+      node.vx *= .9;
+      node.vy *= .9;
+      node.x += node.vx;
+      node.y += node.vy;
 
-      var twinkle = 0.45 + 0.25 * Math.sin(time * 0.0012 + p.phase);
+      var distanceToPointer = Math.hypot(node.x - pointer.x, node.y - pointer.y);
+      if (pointer.active && distanceToPointer < nearestDistance) {
+        nearest = node;
+        nearestDistance = distanceToPointer;
+      }
+    });
+
+    links.forEach(function (link, index) {
+      drawLink(nodes[link[0]], nodes[link[1]], time, index);
+    });
+    nodes.forEach(function (node) { drawNode(node, time, nearest); });
+
+    if (pointer.active) {
+      ctx.strokeStyle = pointer.down ? "rgba(200,255,98,.75)" : "rgba(240,244,237,.28)";
+      ctx.lineWidth = .75;
       ctx.beginPath();
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = twinkle;
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.arc(pointer.x, pointer.y, pointer.down ? 30 : 18, 0, Math.PI * 2);
+      ctx.stroke();
     }
-    ctx.globalAlpha = 1;
 
-    rafId = requestAnimationFrame(tick);
+    if (!reduceMotion && scheduleNext !== false) raf = requestAnimationFrame(draw);
   }
 
-  function onPointerMove(e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    if (!mouse.active) {
-      mouse.smx = mouse.x;
-      mouse.smy = mouse.y;
-    }
-    mouse.active = true;
+  function positionPointer(event) {
+    var rect = canvas.getBoundingClientRect();
+    pointer.x = event.clientX - rect.left;
+    pointer.y = event.clientY - rect.top;
+    pointer.active = true;
+    stage.style.setProperty("--pointer-x", (pointer.x / W * 100) + "%");
+    stage.style.setProperty("--pointer-y", (pointer.y / H * 100) + "%");
   }
 
-  function onPointerLeave() {
-    mouse.active = false;
+  canvas.addEventListener("pointermove", positionPointer, { passive: true });
+  canvas.addEventListener("pointerenter", positionPointer, { passive: true });
+  canvas.addEventListener("pointerleave", function () {
+    pointer.active = false;
+    pointer.down = false;
+    if (mode) mode.textContent = "MOVE TO DISTURB · HOLD TO ATTRACT";
+  });
+  canvas.addEventListener("pointerdown", function (event) {
+    positionPointer(event);
+    pointer.down = true;
+    canvas.setPointerCapture(event.pointerId);
+    if (mode) mode.textContent = "GRAVITY FIELD / ATTRACT";
+  });
+  canvas.addEventListener("pointerup", function () {
+    pointer.down = false;
+    if (mode) mode.textContent = "FIELD ACTIVE / REPEL";
+  });
+  canvas.addEventListener("pointercancel", function () { pointer.down = false; });
+
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(resize).observe(stage);
+  } else {
+    window.addEventListener("resize", resize, { passive: true });
   }
 
-  function start() {
-    if (rafId === null) rafId = requestAnimationFrame(tick);
-  }
-
-  function stop() {
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
-  }
-
-  window.addEventListener("resize", resize, { passive: true });
   document.addEventListener("visibilitychange", function () {
-    if (document.hidden) {
-      running = false;
-      stop();
-    } else if (!reduceMotion) {
-      running = true;
-      start();
+    if (document.hidden && raf) {
+      cancelAnimationFrame(raf);
+      raf = null;
+    } else if (!document.hidden && !reduceMotion && !raf) {
+      raf = requestAnimationFrame(draw);
     }
   });
 
-  if (!reduceMotion) {
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerleave", onPointerLeave, { passive: true });
-  }
-
   resize();
-
-  if (reduceMotion) {
-    seedStatic();
-  } else {
-    start();
-  }
+  if (!reduceMotion) raf = requestAnimationFrame(draw);
 })();
