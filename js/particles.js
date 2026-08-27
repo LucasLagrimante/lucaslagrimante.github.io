@@ -6,8 +6,15 @@
   var mode = document.getElementById("graph-mode");
   var ctx = canvas.getContext("2d");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var W = 0, H = 0, DPR = 1, raf = null;
+  var DEFAULT_MODE = "MOVE TO DISTURB · HOLD CENTER TO REORDER";
+  var W = 0, H = 0, DPR = 1, raf = null, lastFrame = 0;
   var pointer = { x: 0, y: 0, active: false, down: false };
+  var CHARGE_DURATION = 1650;
+  var interaction = {
+    charge: 0,
+    locked: false,
+    burstStarted: -Infinity
+  };
 
   var definitions = [
     { label: "DATA", x: .24, y: .32, cluster: 0, core: true },
@@ -32,13 +39,22 @@
     { label: "MOBILE", x: .61, y: .87, cluster: 3 }
   ];
 
+  var clusterOrigins = definitions
+    .filter(function (definition) { return definition.core; })
+    .sort(function (a, b) { return a.cluster - b.cluster; })
+    .map(function (definition) { return { x: definition.x, y: definition.y }; });
+  var slotByCluster = [0, 1, 2, 3];
+
   var nodes = definitions.map(function (definition, index) {
+    var origin = clusterOrigins[definition.cluster];
     return {
       label: definition.label,
       cluster: definition.cluster,
       core: !!definition.core,
       nx: definition.x,
       ny: definition.y,
+      offsetX: definition.x - origin.x,
+      offsetY: definition.y - origin.y,
       x: 0,
       y: 0,
       hx: 0,
@@ -59,6 +75,51 @@
   });
   links.push([0, 5], [0, 10], [5, 15], [10, 15], [0, 15], [5, 10]);
 
+  function updateHomePositions() {
+    nodes.forEach(function (node) {
+      var slot = clusterOrigins[slotByCluster[node.cluster]];
+      node.nx = Math.max(.07, Math.min(.93, slot.x + node.offsetX));
+      node.ny = Math.max(.07, Math.min(.93, slot.y + node.offsetY));
+      node.hx = node.nx * W;
+      node.hy = node.ny * H;
+    });
+  }
+
+  function shuffledSlots() {
+    var next;
+    do {
+      next = slotByCluster.slice();
+      for (var i = next.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var value = next[i];
+        next[i] = next[j];
+        next[j] = value;
+      }
+    } while (next.some(function (slot, cluster) { return slot === slotByCluster[cluster]; }));
+    return next;
+  }
+
+  function reorderSystem(time) {
+    slotByCluster = shuffledSlots();
+    updateHomePositions();
+    interaction.burstStarted = time;
+    interaction.locked = true;
+    interaction.charge = 0;
+
+    var centerX = W / 2;
+    var centerY = H / 2;
+    nodes.forEach(function (node) {
+      var dx = node.x - centerX;
+      var dy = node.y - centerY;
+      var distance = Math.sqrt(dx * dx + dy * dy) || 1;
+      var impulse = 2.2 + Math.random() * 1.1;
+      node.vx += dx / distance * impulse;
+      node.vy += dy / distance * impulse;
+    });
+
+    if (mode) mode.textContent = "SYSTEM REORDERED / RELEASE TO RESET";
+  }
+
   function resize() {
     var rect = stage.getBoundingClientRect();
     DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -68,9 +129,8 @@
     canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
+    updateHomePositions();
     nodes.forEach(function (node) {
-      node.hx = node.nx * W;
-      node.hy = node.ny * H;
       if (!node.x && !node.y) {
         node.x = node.hx;
         node.y = node.hy;
@@ -125,7 +185,85 @@
     }
   }
 
+  function isCenterHotspot() {
+    var radius = Math.max(48, Math.min(W, H) * .105);
+    return Math.hypot(pointer.x - W / 2, pointer.y - H / 2) <= radius;
+  }
+
+  function updateCharge(time, delta) {
+    if (reduceMotion || interaction.locked) return;
+
+    if (pointer.down && isCenterHotspot()) {
+      interaction.charge = Math.min(1, interaction.charge + delta / CHARGE_DURATION);
+      if (mode) mode.textContent = "CHARGING FIELD / " + Math.round(interaction.charge * 100) + "%";
+      if (interaction.charge >= 1) reorderSystem(time);
+      return;
+    }
+
+    if (interaction.charge > 0) {
+      interaction.charge = Math.max(0, interaction.charge - delta / 520);
+      if (pointer.down && mode) {
+        mode.textContent = interaction.charge > 0
+          ? "RETURN TO CENTER / " + Math.round(interaction.charge * 100) + "%"
+          : "GRAVITY FIELD / ATTRACT";
+      }
+    }
+  }
+
+  function drawCenterTrigger(time) {
+    var centerX = W / 2;
+    var centerY = H / 2;
+    var hot = pointer.active && isCenterHotspot();
+
+    ctx.strokeStyle = hot || interaction.charge > 0
+      ? "rgba(200,255,98,.55)"
+      : "rgba(240,244,237,.16)";
+    ctx.lineWidth = .8;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, hot ? 15 : 11, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = hot ? "#c8ff62" : "rgba(240,244,237,.45)";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, hot ? 3.2 : 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (interaction.charge > 0) {
+      ctx.strokeStyle = "#c8ff62";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(
+        centerX,
+        centerY,
+        21,
+        -Math.PI / 2,
+        -Math.PI / 2 + Math.PI * 2 * interaction.charge
+      );
+      ctx.stroke();
+    }
+
+    if (hot && !interaction.locked) {
+      ctx.font = "500 8px 'JetBrains Mono', monospace";
+      ctx.fillStyle = "rgba(200,255,98,.86)";
+      ctx.textAlign = "center";
+      ctx.fillText(pointer.down ? "KEEP HOLDING" : "HOLD TO REORDER", centerX, centerY + 37);
+    }
+
+    var burstProgress = (time - interaction.burstStarted) / 780;
+    if (burstProgress >= 0 && burstProgress < 1) {
+      var eased = 1 - Math.pow(1 - burstProgress, 3);
+      ctx.strokeStyle = "rgba(200,255,98," + ((1 - burstProgress) * .62) + ")";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 18 + eased * Math.min(W, H) * .24, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+
   function draw(time, scheduleNext) {
+    var delta = lastFrame ? Math.min(48, Math.max(0, time - lastFrame)) : 16;
+    lastFrame = time;
+    updateCharge(time, delta);
     ctx.clearRect(0, 0, W, H);
     var nearest = null;
     var nearestDistance = 86;
@@ -170,6 +308,7 @@
     links.forEach(function (link, index) {
       drawLink(nodes[link[0]], nodes[link[1]], time, index);
     });
+    drawCenterTrigger(time);
     nodes.forEach(function (node) { drawNode(node, time, nearest); });
 
     if (pointer.active) {
@@ -190,6 +329,9 @@
     pointer.active = true;
     stage.style.setProperty("--pointer-x", (pointer.x / W * 100) + "%");
     stage.style.setProperty("--pointer-y", (pointer.y / H * 100) + "%");
+    if (!pointer.down && mode) {
+      mode.textContent = isCenterHotspot() ? "CENTER READY / HOLD TO REORDER" : DEFAULT_MODE;
+    }
   }
 
   canvas.addEventListener("pointermove", positionPointer, { passive: true });
@@ -197,19 +339,28 @@
   canvas.addEventListener("pointerleave", function () {
     pointer.active = false;
     pointer.down = false;
-    if (mode) mode.textContent = "MOVE TO DISTURB · HOLD TO ATTRACT";
+    interaction.charge = 0;
+    interaction.locked = false;
+    if (mode) mode.textContent = DEFAULT_MODE;
   });
   canvas.addEventListener("pointerdown", function (event) {
     positionPointer(event);
     pointer.down = true;
     canvas.setPointerCapture(event.pointerId);
-    if (mode) mode.textContent = "GRAVITY FIELD / ATTRACT";
+    if (mode) mode.textContent = isCenterHotspot() ? "CHARGING FIELD / 0%" : "GRAVITY FIELD / ATTRACT";
   });
   canvas.addEventListener("pointerup", function () {
     pointer.down = false;
-    if (mode) mode.textContent = "FIELD ACTIVE / REPEL";
+    interaction.charge = 0;
+    interaction.locked = false;
+    if (mode) mode.textContent = isCenterHotspot() ? "CENTER READY / HOLD TO REORDER" : DEFAULT_MODE;
   });
-  canvas.addEventListener("pointercancel", function () { pointer.down = false; });
+  canvas.addEventListener("pointercancel", function () {
+    pointer.down = false;
+    interaction.charge = 0;
+    interaction.locked = false;
+    if (mode) mode.textContent = DEFAULT_MODE;
+  });
 
   if ("ResizeObserver" in window) {
     new ResizeObserver(resize).observe(stage);
