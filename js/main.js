@@ -182,4 +182,58 @@
   document.querySelectorAll(".reveal").forEach(function (el) {
     revealObserver.observe(el);
   });
+
+  // Iniciais piscando nos cards de sistema: cada letra do nome aparece por
+  // instantes e some, decodificando o nome do produto atrás do rótulo LIVE.
+  // Pausa em hover para o texto ficar legível enquanto se lê o card.
+  var TYPE_SPEED = 190;
+  var TYPE_HOLD = 1100;
+
+  document.querySelectorAll(".domain-initials").forEach(function (el) {
+    var letters = (el.getAttribute("data-initials") || "").split("");
+    if (!letters.length) return;
+
+    var index = 0;
+    var timer = null;
+
+    function clearTyping() {
+      if (timer) clearTimeout(timer);
+      timer = null;
+      el.classList.remove("is-typing");
+      el.removeAttribute("data-letter");
+    }
+
+    function step() {
+      // Omite a letra repetida para o piscar ter cadência natural.
+      while (letters[index] === letters[(index + 1) % letters.length] && letters.length > 1) {
+        index = (index + 1) % letters.length;
+      }
+      el.setAttribute("data-letter", letters[index]);
+      el.classList.add("is-typing");
+      index = (index + 1) % letters.length;
+      timer = setTimeout(function () {
+        el.classList.remove("is-typing");
+        timer = setTimeout(step, TYPE_HOLD);
+      }, TYPE_SPEED);
+    }
+
+    function start() {
+      if (timer || el.matches(":hover")) return;
+      index = 0;
+      step();
+    }
+
+    var card = el.closest(".domain-card");
+    if (card) {
+      card.addEventListener("mouseenter", clearTyping);
+      card.addEventListener("mouseleave", start);
+    }
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) clearTyping();
+    });
+
+    // Cada card começa fora de fase, senão os quatro piscam juntos.
+    setTimeout(start, 400 + Math.random() * 1400);
+  });
 })();
