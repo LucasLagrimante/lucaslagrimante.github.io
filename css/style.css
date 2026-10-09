@@ -707,9 +707,10 @@ main { position: relative; z-index: 1; }
 
 .domain-visual {
   position: relative;
-  height: clamp(104px, 12vw, 132px);
+  height: clamp(120px, 13vw, 140px);
   display: grid;
   place-items: center;
+  padding: 1.25rem;
   overflow: hidden;
   border-bottom: 1px solid var(--border);
   background:
@@ -719,34 +720,46 @@ main { position: relative; z-index: 1; }
   background-size: 24px 24px;
 }
 
-/* Favicon real do produto. `max-width` sem `max-height` esticaria o desenho;
-   o par + object-fit mantém a proporção original dentro da caixa. */
+/* Favicon real do produto, exibido no tamanho nativo.
+   Regra: nunca fazer upscale. Cada arquivo fica no tamanho em que foi
+   exportado e o CSS só limita — ampliar um PNG pequeno é o que produz pixelado.
+   `object-fit: contain` mantém a proporção dentro da caixa. */
 .domain-logo {
   display: block;
   width: auto;
   height: auto;
-  max-width: min(72%, 72px);
-  max-height: 72px;
+  max-width: 100%;
+  max-height: 56px;
   object-fit: contain;
   filter: drop-shadow(0 0 1.1rem rgba(200, 255, 98, 0.22));
   transition: transform 260ms ease, filter 260ms ease;
 }
 
 .domain-card:hover .domain-logo,
-.domain-card:focus-visible .domain-logo { transform: scale(1.06); filter: drop-shadow(0 0 1.5rem rgba(200, 255, 98, 0.4)); }
+.domain-card:focus-visible .domain-logo { transform: scale(1.08); filter: drop-shadow(0 0 1.5rem rgba(200, 255, 98, 0.4)); }
 
-/* O logo do Rivals é um retângulo escuro full-bleed (o desenho do próprio
-   ícone), então precisa de mais escala para não sumir contra o card. */
-.domain-logo-plate { max-width: min(96%, 96px); max-height: 96px; }
+/* O logo do Rivals é um retângulo escuro full-bleed: 48px nativos numa caixa
+   quadrada, então precisa de respiro lateral e um leve realce. */
+.domain-logo-plate {
+  max-height: 60px;
+  border-radius: 6px;
+  filter: drop-shadow(0 0 0.9rem rgba(200, 255, 98, 0.3));
+}
 
-/* O Lucas Drone é um wordmark horizontal (ratio ~1.9): sem limite de largura
-   ela estoura a caixa, então a largura manda e a altura acompanha. */
-.domain-logo-wide { max-width: min(86%, 96px); }
+.domain-card:hover .domain-logo-plate,
+.domain-card:focus-visible .domain-logo-plate { filter: drop-shadow(0 0 1.4rem rgba(200, 255, 98, 0.45)); }
 
-/* Anel que se expande a partir do logo — ecoa o mapa de partículas do hero. */
+/* O Lucas Drone é um wordmark horizontal (ratio ~1.9): em 56px de altura ele
+   ficaria minúsculo, então ganha altura própria — mas o arquivo nativo é
+   pequeno, então o limite é a largura da caixa, nunca um upscale cego. */
+.domain-logo-wide { max-height: 64px; max-width: 100%; }
+
+/* Anel que se expande a partir do logo — ecoa o mapa de partículas do hero.
+   Dimensionado em relação ao logo, senão o anel não fica centrado no wordmark
+   horizontal e lê como desalinhado. */
 .domain-pulse {
   position: absolute;
-  width: clamp(4rem, 6.5vw, 5.4rem);
+  width: clamp(3.6rem, 5.5vw, 4.6rem);
   aspect-ratio: 1;
   border: 1px solid rgba(200, 255, 98, 0.32);
   border-radius: 50%;
