@@ -36,34 +36,12 @@ const BOX = 256
 const LOGOS = [
   {
     out: 'rivals.png',
-    build: async () => {
-      // Favicon real do Marvel Rivals: o "R" com raio sobre um azulejo
-      // azul-escuro semitransparente. O azulejo é preenchimento do ícone, não
-      // arte — em card escuro vira um bloco que briga com o fundo.
-      const raw = await readFile(join(SRC_DIR, 'rivals.png'))
-      const { data, info } = await sharp(raw).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
-      const out = Buffer.alloc(info.width * info.height * 4)
-
-      for (let i = 0; i < info.width * info.height; i += 1) {
-        const r = data[i * 4]
-        const g = data[i * 4 + 1]
-        const b = data[i * 4 + 2]
-        // Azulejo: azul domina e é escuro. O branco (255,255,255) e o amarelo
-        // (243,209,42) do monograma não satisfazem "azul > vermelho".
-        const isTile = b > r + 6 && b > g + 6 && r < 140
-        const alpha = data[i * 4 + 3]
-        out[i * 4] = r
-        out[i * 4 + 1] = g
-        out[i * 4 + 2] = b
-        // Resíduo de alfa baixo nas bordas do azulejo viraria faixa no trim.
-        out[i * 4 + 3] = isTile ? 0 : alpha > 40 ? alpha : 0
-      }
-
-      return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer()
-    },
-    // O monograma é largo e achatado (251x132 depois do trim): altura menor
-    // para equivaler a área dos quadrados.
-    height: 116,
+    // Logo oficial do Marvel Rivals (400x400, fundo azul-marinho uniforme
+    // #31334C). O fundo vira alfa por distância de cor; a arte fica em 322x164.
+    // O logo já vem limpo — aqui não há tratamento, só o trim e a escala.
+    build: () => readFile(join(SRC_DIR, 'rivals.png')),
+    // Bem mais largo que os quadrados: altura menor para equivaler a área.
+    height: 92,
   },
   {
     out: 'minhagrana.png',
