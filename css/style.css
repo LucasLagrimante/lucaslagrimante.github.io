@@ -719,12 +719,14 @@ main { position: relative; z-index: 1; }
   background-size: 24px 24px;
 }
 
-/* Favicon real do produto. Os nomes variam muito em peso e cor, então o
-   container normaliza o enquadramento e a sombra faz o recorteader. */
+/* Favicon real do produto. `max-width` sem `max-height` esticaria o desenho;
+   o par + object-fit mantém a proporção original dentro da caixa. */
 .domain-logo {
+  display: block;
   width: auto;
-  height: clamp(52px, 6.4vw, 64px);
-  max-width: 78%;
+  height: auto;
+  max-width: min(72%, 72px);
+  max-height: 72px;
   object-fit: contain;
   filter: drop-shadow(0 0 1.1rem rgba(200, 255, 98, 0.22));
   transition: transform 260ms ease, filter 260ms ease;
@@ -733,20 +735,13 @@ main { position: relative; z-index: 1; }
 .domain-card:hover .domain-logo,
 .domain-card:focus-visible .domain-logo { transform: scale(1.06); filter: drop-shadow(0 0 1.5rem rgba(200, 255, 98, 0.4)); }
 
-/* O favicon do Lucas Drone é um logo photographic com fundo claro: sobre o
-   grid escuro ele some, então ganha um prato claro por baixo. */
-.domain-logo-photo {
-  height: clamp(64px, 8vw, 76px);
-  max-width: 86%;
-  border-radius: 10px;
-  padding: 0.3rem;
-  background: #f4f6f5;
-  box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.55);
-  filter: none;
-}
+/* O logo do Rivals é um retângulo escuro full-bleed (o desenho do próprio
+   ícone), então precisa de mais escala para não sumir contra o card. */
+.domain-logo-plate { max-width: min(96%, 96px); max-height: 96px; }
 
-.domain-card:hover .domain-logo-photo,
-.domain-card:focus-visible .domain-logo-photo { filter: none; }
+/* O Lucas Drone é um wordmark horizontal (ratio ~1.9): sem limite de largura
+   ela estoura a caixa, então a largura manda e a altura acompanha. */
+.domain-logo-wide { max-width: min(86%, 96px); }
 
 /* Anel que se expande a partir do logo — ecoa o mapa de partículas do hero. */
 .domain-pulse {
