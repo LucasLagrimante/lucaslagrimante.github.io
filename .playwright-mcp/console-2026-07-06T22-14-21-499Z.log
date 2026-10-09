@@ -1,0 +1,44 @@
+[     107ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=e384594a:14343
+[     127ms] [LOG] [Auth] Iniciando getSession no carregamento... @ http://127.0.0.1:5173/src/context/AuthContext.tsx:79
+[     127ms] [LOG] [Auth] Iniciando getSession no carregamento... @ http://127.0.0.1:5173/src/context/AuthContext.tsx:79
+[     129ms] [LOG] [Auth] Evento: SIGNED_IN com sessão @ http://127.0.0.1:5173/src/context/AuthContext.tsx:95
+[     154ms] [LOG] %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ https://va.vercel-scripts.com/v1/script.debug.js:0
+[     154ms] [LOG] %c[Vercel Web Analytics]%c [view] http://127.0.0.1:5173/ color: rgb(120, 120, 120) color: inherit {o: http://127.0.0.1:5173/, sv: 0.1.3, sdkn: @vercel/analytics/react, sdkv: 1.5.0, ts: 1783376061652} /_vercel/insights/view @ https://va.vercel-scripts.com/v1/script.debug.js:0
+[     154ms] [LOG] %c[Vercel Speed Insights]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit @ https://va.vercel-scripts.com/v1/speed-insights/script.debug.js:0
+[     253ms] [WARNING] <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> @ http://127.0.0.1:5173/:0
+[     435ms] [LOG] [Auth] Sessão recuperada com sucesso @ http://127.0.0.1:5173/src/context/AuthContext.tsx:86
+[     448ms] [INFO] Google GSI já foi inicializado, pulando... @ http://127.0.0.1:5173/src/pages/public/AuthForm.tsx:253
+[     509ms] [LOG] [Auth] Sessão recuperada com sucesso @ http://127.0.0.1:5173/src/context/AuthContext.tsx:86
+[     512ms] [LOG] [Auth] Evento: INITIAL_SESSION com sessão @ http://127.0.0.1:5173/src/context/AuthContext.tsx:95
+[     551ms] [ERROR] Not signed in with the identity provider. @ http://127.0.0.1:5173/:0
+[    4388ms] [ERROR] [GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token. @ https://accounts.google.com/gsi/client:87
+[  245045ms] [ERROR] The final argument passed to %s changed size between renders. The order and size of this array must remain constant.
+
+Previous: %s
+Incoming: %s useEffect [false, false, false, true, async () => {
+		try {
+			const { value } = await Preferences.get({ key: BIOMETRIC_EMAIL_KEY });
+			return value;
+		} catch {
+			return null;
+		}
+	}] [false, false, false, true, async () => {
+		try {
+			const { value } = await Preferences.get({ key: BIOMETRIC_EMAIL_KEY });
+			return value;
+		} catch {
+			return null;
+		}
+	}, (to, options = {}) => {
+		warning(activeRef.current, navigateEffectWarning);
+		if (!activeRef.current) return;
+		if (typeof to === "number") {
+			navigator.go(to);
+			return;
+		}
+		let path = resolveTo(to, JSON.parse(routePathnamesJson), locationPathname, options.relative === "path");
+		if (dataRouterContext == null && basename !== "/") path.pathname = path.pathname === "/" ? basename : joinPaths([basename, path.pathname]);
+		(!!options.replace ? navigator.replace : navigator.push)(path, options.state, options);
+	}] @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=e384594a:4204
+[  245777ms] [LOG] [ModuleSelector] Verificando biometria: {isNativePlatform: false, biometricAvailable: false, biometricEnabled: false, biometricLoading: false, justLoggedIn: true} @ http://127.0.0.1:5173/src/pages/ModuleSelector.tsx:305
+[  245777ms] [LOG] [ModuleSelector] ❌ Alguma condição falhou, modal não exibido @ http://127.0.0.1:5173/src/pages/ModuleSelector.tsx:318

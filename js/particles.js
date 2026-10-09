@@ -15,6 +15,13 @@
     locked: false,
     burstStarted: -Infinity
   };
+  var LABEL_SWITCH_DELAY = 180;
+  var labelFocus = {
+    current: null,
+    pending: null,
+    pendingSince: 0,
+    locked: false
+  };
 
   var definitions = [
     { label: "DATA", x: .24, y: .32, cluster: 0, core: true },
@@ -61,6 +68,7 @@
       hy: 0,
       vx: 0,
       vy: 0,
+      labelAlpha: 0,
       phase: index * 1.73
     };
   });
@@ -159,30 +167,89 @@
     ctx.fill();
   }
 
-  function drawNode(node, time, nearest) {
+  function drawNode(node, time, focusedNode) {
     var energy = .5 + Math.sin(time * .0012 + node.phase) * .12;
-    var highlighted = node === nearest;
-    var radius = node.core ? 6 : highlighted ? 4.2 : 2.6;
+    var targetAlpha = node === focusedNode ? 1 : 0;
+    node.labelAlpha += (targetAlpha - node.labelAlpha) * .14;
+    if (node.labelAlpha < .002) node.labelAlpha = 0;
+    var highlighted = node.labelAlpha > .02;
+    var radius = node.core ? 6 : 2.6 + node.labelAlpha * 1.6;
 
     if (node.core || highlighted) {
+      ctx.globalAlpha = node.core ? 1 : node.labelAlpha;
       ctx.strokeStyle = highlighted ? "rgba(200,255,98,.72)" : "rgba(200,255,98,.25)";
       ctx.lineWidth = .8;
       ctx.beginPath();
       ctx.arc(node.x, node.y, radius + (node.core ? 7 : 5) + energy * 2, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.globalAlpha = 1;
     }
 
     ctx.fillStyle = node.core || highlighted ? "#c8ff62" : "rgba(240,244,237," + energy + ")";
+    ctx.globalAlpha = node.core ? 1 : highlighted ? .55 + node.labelAlpha * .45 : 1;
     ctx.beginPath();
     ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
     ctx.fill();
+    ctx.globalAlpha = 1;
 
     if (node.core || highlighted) {
       ctx.font = (node.core ? "600 10px" : "500 9px") + " 'JetBrains Mono', monospace";
       ctx.fillStyle = node.core ? "rgba(240,244,237,.9)" : "rgba(200,255,98,.92)";
       ctx.textAlign = "left";
+      ctx.globalAlpha = node.core ? 1 : node.labelAlpha;
       ctx.fillText(node.label, node.x + radius + 10, node.y + 3);
+      ctx.globalAlpha = 1;
     }
+  }
+
+  function closestTransientNode(limit) {
+    var closest = null;
+    var closestDistance = limit;
+    nodes.forEach(function (node) {
+      if (node.core) return;
+      var distance = Math.hypot(node.x - pointer.x, node.y - pointer.y);
+      if (distance < closestDistance) {
+        closest = node;
+        closestDistance = distance;
+      }
+    });
+    return closest;
+  }
+
+  function resolveLabelFocus(time, candidate) {
+    if (!pointer.active) {
+      labelFocus.current = null;
+      labelFocus.pending = null;
+      labelFocus.locked = false;
+      return null;
+    }
+
+    if (pointer.down) {
+      if (!labelFocus.locked && candidate) {
+        labelFocus.current = candidate;
+        labelFocus.pending = null;
+        labelFocus.locked = true;
+      }
+      return labelFocus.current;
+    }
+
+    labelFocus.locked = false;
+    if (candidate === labelFocus.current) {
+      labelFocus.pending = null;
+      return labelFocus.current;
+    }
+
+    if (candidate !== labelFocus.pending) {
+      labelFocus.pending = candidate;
+      labelFocus.pendingSince = time;
+      return labelFocus.current;
+    }
+
+    if (time - labelFocus.pendingSince >= LABEL_SWITCH_DELAY) {
+      labelFocus.current = candidate;
+      labelFocus.pending = null;
+    }
+    return labelFocus.current;
   }
 
   function isCenterHotspot() {
@@ -299,17 +366,19 @@
       node.y += node.vy;
 
       var distanceToPointer = Math.hypot(node.x - pointer.x, node.y - pointer.y);
-      if (pointer.active && distanceToPointer < nearestDistance) {
+      if (pointer.active && !node.core && distanceToPointer < nearestDistance) {
         nearest = node;
         nearestDistance = distanceToPointer;
       }
     });
 
+    var focusedNode = resolveLabelFocus(time, nearest);
+
     links.forEach(function (link, index) {
       drawLink(nodes[link[0]], nodes[link[1]], time, index);
     });
     drawCenterTrigger(time);
-    nodes.forEach(function (node) { drawNode(node, time, nearest); });
+    nodes.forEach(function (node) { drawNode(node, time, focusedNode); });
 
     if (pointer.active) {
       ctx.strokeStyle = pointer.down ? "rgba(200,255,98,.75)" : "rgba(240,244,237,.28)";
@@ -341,11 +410,17 @@
     pointer.down = false;
     interaction.charge = 0;
     interaction.locked = false;
+    labelFocus.current = null;
+    labelFocus.pending = null;
+    labelFocus.locked = false;
     if (mode) mode.textContent = DEFAULT_MODE;
   });
   canvas.addEventListener("pointerdown", function (event) {
     positionPointer(event);
     pointer.down = true;
+    labelFocus.current = closestTransientNode(100);
+    labelFocus.pending = null;
+    labelFocus.locked = !!labelFocus.current;
     canvas.setPointerCapture(event.pointerId);
     if (mode) mode.textContent = isCenterHotspot() ? "CHARGING FIELD / 0%" : "GRAVITY FIELD / ATTRACT";
   });
@@ -353,12 +428,17 @@
     pointer.down = false;
     interaction.charge = 0;
     interaction.locked = false;
+    labelFocus.pending = null;
+    labelFocus.locked = false;
     if (mode) mode.textContent = isCenterHotspot() ? "CENTER READY / HOLD TO REORDER" : DEFAULT_MODE;
   });
   canvas.addEventListener("pointercancel", function () {
     pointer.down = false;
     interaction.charge = 0;
     interaction.locked = false;
+    labelFocus.current = null;
+    labelFocus.pending = null;
+    labelFocus.locked = false;
     if (mode) mode.textContent = DEFAULT_MODE;
   });
 
