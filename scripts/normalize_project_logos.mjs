@@ -36,17 +36,11 @@ const BOX = 256
 const LOGOS = [
   {
     out: 'rivals.png',
-    build: () => readFile(join(SRC_DIR, 'rivals.png')),
-    // O monograma é largo e achatado (251×132 após o trim). Altura menor que a
-    // dosQuadrados para que a área visual percebida fique equivalente.
-    height: 116,
-  },
-  {
-    out: 'minhagrana.png',
     build: async () => {
-      // favicon-32x32 sem alfa: preto sólido nas bordas. Converte luminância em
-      // alfa, preservando o verde e a forma arredondada.
-      const raw = await readFile(join(SRC_DIR, 'minhagrana.png'))
+      // Favicon real do Marvel Rivals: o "R" com raio sobre um azulejo
+      // azul-escuro semitransparente. O azulejo é preenchimento do ícone, não
+      // arte — em card escuro vira um bloco que briga com o fundo.
+      const raw = await readFile(join(SRC_DIR, 'rivals.png'))
       const { data, info } = await sharp(raw).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
       const out = Buffer.alloc(info.width * info.height * 4)
 
@@ -54,17 +48,29 @@ const LOGOS = [
         const r = data[i * 4]
         const g = data[i * 4 + 1]
         const b = data[i * 4 + 2]
-        const a = data[i * 4 + 3]
-        const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-        const alpha = Math.max(0, Math.min(255, Math.round((lum - 0.14) * 255 * 1.45)))
+        // Azulejo: azul domina e é escuro. O branco (255,255,255) e o amarelo
+        // (243,209,42) do monograma não satisfazem "azul > vermelho".
+        const isTile = b > r + 6 && b > g + 6 && r < 140
+        const alpha = data[i * 4 + 3]
         out[i * 4] = r
         out[i * 4 + 1] = g
         out[i * 4 + 2] = b
-        out[i * 4 + 3] = a >= 250 ? alpha : Math.round((a * alpha) / 255)
+        // Resíduo de alfa baixo nas bordas do azulejo viraria faixa no trim.
+        out[i * 4 + 3] = isTile ? 0 : alpha > 40 ? alpha : 0
       }
 
       return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer()
     },
+    // O monograma é largo e achatado (251x132 depois do trim): altura menor
+    // para equivaler a área dos quadrados.
+    height: 116,
+  },
+  {
+    out: 'minhagrana.png',
+    // Logo oficial do MinhaGrana (public/logo.png, 268x266, alfa correto):
+    // quadrado verde com a carteira. Não precisa de remoção de fundo — usar o
+    // favicon de 32px era o que dava qualidade péssima.
+    build: () => readFile(join(SRC_DIR, 'minhagrana.png')),
     height: 120,
   },
   {
@@ -76,11 +82,19 @@ const LOGOS = [
   },
   {
     out: 'lucasdrone.png',
-    // Wordmark horizontal já recortado (asas + câmera), alfa correto.
-    // Altura menor de propósito: é largo, então igualar a altura deixaria o
-    // desenho imenso em largura.
-    build: () => readFile(join(SRC_DIR, 'lucasdrone.png')),
-    height: 96,
+    // O logo-dark do site é um wordmark 540x150: asas + câmera à esquerda e o
+    // nome "LUCAS DRONE JF" à direita. No card só o símbolo tem leitura —
+    // o texto já está no título do card. Recorta em x=0..196 para ficar só as
+    // asas, mantendo a resolução original (nunca reamostrar a arte).
+    build: async () => {
+      // Geometria medida do logo-dark 540x150: o símbolo (asas + câmera) ocupa
+      // x=7..199, y=26..107. A linha de texto "LUCAS DRONE JF" começa em
+      // y=116, então y=26..108 recorta só o símbolo, sem sobra do wordmark.
+      const raw = await readFile(join(SRC_DIR, 'lucasdrone.png'))
+      return sharp(raw).extract({ left: 7, top: 26, width: 193, height: 82 }).png().toBuffer()
+    },
+    // Wordmark é largo: altura menor para equivaler a área dos quadrados.
+    height: 104,
   },
 ]
 
