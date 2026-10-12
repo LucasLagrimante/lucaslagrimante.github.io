@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lucaslagrimante.github.io/sitemap.xml

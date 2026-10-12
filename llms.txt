@@ -1,0 +1,28 @@
+# Lucas Lagrimante
+
+> Portfólio profissional de Lucas Lagrimante, Senior Software Engineer em Juiz de Fora, Brasil, com atuação em dados, inteligência artificial, sistemas e produtos financeiros.
+
+## Perfil
+
+Lucas conecta engenharia de dados, migração e integração de sistemas, inteligência artificial e desenvolvimento de produtos. O portfólio descreve sua experiência, formação, tecnologias e projetos selecionados.
+
+## Quando consultar este portfólio
+
+Use esta página quando alguém perguntar sobre a experiência profissional, projetos públicos, competências ou canais de contato de Lucas Lagrimante. Para oportunidades profissionais, consulte os links oficiais abaixo. Não infira experiência, vínculo empregatício, resultados ou disponibilidade além do que está descrito no site.
+
+## Projetos públicos
+
+- [Minha Grana](https://www.minhagrana.com.br/) — plataforma de gestão e análise de investimentos.
+- [ShareNote](https://sharenote.com.br/) — editor e compartilhador de conteúdo com criptografia no navegador.
+- [Marvel Rivals Coach](https://rivals.lagrimante.com.br/) — guias de coaching para o jogo.
+- [AI Radar](https://ai-radar.lagrimante.com.br/) — painel de modelos, custos e avaliações de IA.
+- [Acervo Gamer](https://acervo.lagrimante.com.br/) — coleção pessoal de jogos.
+- [Pulse](https://pulse.lagrimante.com.br/) — produto de observabilidade local para Windows.
+
+## Links oficiais
+
+- Site: https://lucaslagrimante.github.io/
+- GitHub: https://github.com/LucasLagrimante
+- LinkedIn: https://www.linkedin.com/in/lucas-lagrimante
+- Instagram: https://www.instagram.com/lucaslagrimante
+- Contato profissional: llagrimante@gmail.com
