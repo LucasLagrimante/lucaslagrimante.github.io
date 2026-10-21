@@ -1027,7 +1027,7 @@ main { position: relative; z-index: 1; }
   .metrics article:nth-child(-n + 2) { border-bottom: 1px solid var(--border); }
   .case-list { grid-template-columns: 1fr; }
   .case-visual { height: clamp(290px, 48vw, 420px); }
-  .domain-grid { grid-template-columns: 1fr; }
+  .domain-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .capability-grid { grid-template-columns: repeat(2, 1fr); }
   .capability-grid article:nth-child(2) { border-right: 0; }
   .capability-grid article:nth-child(-n + 2) { border-bottom: 1px solid var(--border); }
@@ -1049,6 +1049,10 @@ main { position: relative; z-index: 1; }
   .hero-actions { margin-top: 1.5rem; }
   .graph-stage { min-height: 350px; max-height: none; }
   .graph-head span:last-child { display: none; }
+
+  .domain-topline { gap: 0.35rem; padding-inline: 0.55rem; font-size: 0.48rem; }
+  .domain-index { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .domain-initials { display: none; }
 
   .about-grid,
   .work-intro,
