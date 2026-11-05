@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="AI Radar">
+  <!-- Emblema AI Radar: mostrador de radar impresso — aro, setor de varredura sólido
+       (lê também como gráfico de setor) e um ponto detectado. Sem gradiente nem brilho. -->
+  <rect width="256" height="256" fill="#0E5A61"/>
+  <circle cx="128" cy="128" r="92" fill="none" stroke="#F9E3D2" stroke-width="16"/>
+  <path d="M128 128 L128 36 A92 92 0 0 1 207.7 82 Z" fill="#F9E3D2"/>
+  <circle cx="84" cy="166" r="17" fill="#E8563F"/>
+</svg>
