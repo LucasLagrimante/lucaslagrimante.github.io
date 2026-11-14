@@ -1,0 +1,55 @@
+[
+  {
+    "mobile": false,
+    "status": 200,
+    "metrics": {
+      "width": 1440,
+      "client": 1440,
+      "scroll": 1440,
+      "dpr": 1,
+      "touch": 0,
+      "cards": 8,
+      "heading": "Eloara",
+      "status": "IN DEVELOPMENT",
+      "logoLoaded": true,
+      "indices": [
+        "01 / FINANCE",
+        "02 / PRODUCTIVITY",
+        "03 / WINDOWS OBSERVABILITY",
+        "04 / HEALTH",
+        "05 / AI INTELLIGENCE",
+        "06 / AERIAL VIDEO",
+        "07 / COACHING",
+        "08 / GAMING"
+      ],
+      "focus": "solid"
+    }
+  },
+  {
+    "mobile": true,
+    "status": 200,
+    "metrics": {
+      "width": 390,
+      "client": 390,
+      "scroll": 390,
+      "dpr": 2,
+      "touch": 1,
+      "cards": 8,
+      "heading": "Eloara",
+      "status": "IN DEVELOPMENT",
+      "logoLoaded": true,
+      "indices": [
+        "01 / FINANCE",
+        "02 / PRODUCTIVITY",
+        "03 / WINDOWS OBSERVABILITY",
+        "04 / HEALTH",
+        "05 / AI INTELLIGENCE",
+        "06 / AERIAL VIDEO",
+        "07 / COACHING",
+        "08 / GAMING"
+      ],
+      "focus": "solid",
+      "liveTapDestination": "https://eloara.lagrimante.com.br/"
+    }
+  }
+]

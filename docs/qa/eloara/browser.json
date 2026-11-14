@@ -1,0 +1,102 @@
+[
+  {
+    "mobile": false,
+    "metrics": {
+      "width": 1440,
+      "client": 1440,
+      "scroll": 1440,
+      "dpr": 2,
+      "touch": 0,
+      "cards": 8,
+      "images": [
+        {
+          "src": "assets/projects/minhagrana.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/sharenote.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/pulse.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/eloara.svg",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/ai-radar.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/lucasdrone.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/rivals.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/acervogamer.png",
+          "loaded": true
+        }
+      ],
+      "focus": "solid",
+      "eloara": "04 / HEALTH\nIN DEVELOPMENT\nEloara\n\nPlataforma de saúde multiprofissional em desenvolvimento, com foco inicial em piloto médico.\n\neloara.lagrimante.com.br\n↗",
+      "pt": "04 / HEALTH\nIN DEVELOPMENT\nEloara\n\nPlataforma de saúde multiprofissional em desenvolvimento, com foco inicial em piloto médico.\n\neloara.lagrimante.com.br\n↗"
+    },
+    "errors": [],
+    "failed": []
+  },
+  {
+    "mobile": true,
+    "metrics": {
+      "width": 390,
+      "client": 390,
+      "scroll": 390,
+      "dpr": 2,
+      "touch": 0,
+      "cards": 8,
+      "images": [
+        {
+          "src": "assets/projects/minhagrana.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/sharenote.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/pulse.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/eloara.svg",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/ai-radar.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/lucasdrone.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/rivals.png",
+          "loaded": true
+        },
+        {
+          "src": "assets/projects/acervogamer.png",
+          "loaded": true
+        }
+      ],
+      "focus": "solid",
+      "eloara": "04 / HEALTH\nIN DEVELOPMENT\nEloara\n\nPlataforma de saúde multiprofissional em desenvolvimento, com foco inicial em piloto médico.\n\neloara.lagrimante.com.br\n↗",
+      "pt": "04 / HEALTH\nIN DEVELOPMENT\nEloara\n\nPlataforma de saúde multiprofissional em desenvolvimento, com foco inicial em piloto médico.\n\neloara.lagrimante.com.br\n↗"
+    },
+    "errors": [],
+    "failed": []
+  }
+]
