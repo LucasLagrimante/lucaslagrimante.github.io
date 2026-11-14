@@ -18,6 +18,7 @@ Use esta página quando alguém perguntar sobre a experiência profissional, pro
 - [AI Radar](https://ai-radar.lagrimante.com.br/) — painel de modelos, custos e avaliações de IA.
 - [Acervo Gamer](https://acervo.lagrimante.com.br/) — coleção pessoal de jogos.
 - [Pulse](https://pulse.lagrimante.com.br/) — produto de observabilidade local para Windows.
+- [VagaCheck](https://vagacheck.lagrimante.com.br/) — radar de vagas com fit explicável e currículo por vaga.
 
 ## Links oficiais
 
