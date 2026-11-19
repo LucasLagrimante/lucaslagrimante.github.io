@@ -99,6 +99,10 @@
 .llr__pip{
   position:relative;display:block;width:var(--llr-pip);height:var(--llr-pip);
   border-radius:5px;background:var(--llr-faint);
+  /* zera padding/box-sizing: o pip e um <a>, e hosts costumam aplicar
+     "nav a{padding-block:12px}" para area de toque. Sem isto, os pontos do
+     modo compacto viram 5x24 em vez de 5x5. */
+  padding:0;margin:0;box-sizing:border-box;
 }
 /* O img usa tamanho explicito, nao height:100%. Com height:100% a altura
    resolve contra o pai, e um host com line-height generoso no body (ex.
