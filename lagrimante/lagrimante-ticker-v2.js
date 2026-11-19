@@ -1,16 +1,25 @@
 /* Stub estavel: carrega a versao com hash (scripts/versionar.py).
-   O nome do arquivo real muda a cada publicacao, entao cache longo nunca
-   entrega componente antigo -- e este stub tem cache curto. */
+   O arquivo real muda de nome a cada publicacao, entao cache longo nunca
+   entrega componente antigo -- e este stub tem cache curto.
+
+   A base vem do src deste script: um caminho absoluto seria relativo ao
+   dominio do site hospedeiro e daria 404 fora do host canonico. */
 (function () {
-  var doc = document;
+  var s = document.currentScript || (function () {
+    var all = document.getElementsByTagName("script");
+    return all[all.length - 1];
+  })();
+  var base = (s && s.src ? s.src : "").replace(/lagrimante-ticker-v2\.js(\?.*)?$/, "");
+  if (!base) return;
+
   var fila = ["lagrimante-projects.8a3d4c6f.js", "lagrimante-ticker.e9af983d.js"];
   (function proximo() {
     if (!fila.length) return;
-    var s = doc.createElement("script");
-    s.src = "/lagrimante/" + fila.shift();
-    s.async = false;
-    s.onload = proximo;
-    s.onerror = proximo;
-    (doc.head || doc.documentElement).appendChild(s);
+    var el = document.createElement("script");
+    el.src = base + fila.shift();
+    el.async = false;
+    el.onload = proximo;
+    el.onerror = proximo;
+    (document.head || document.documentElement).appendChild(el);
   })();
 })();
