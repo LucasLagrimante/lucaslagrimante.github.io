@@ -65,6 +65,7 @@
   text-underline-offset:3px;text-decoration-thickness:1px;
 }
 .llr__by:focus-visible{outline:2px solid var(--llr-accent);outline-offset:3px;border-radius:3px}
+.llr__by-s{display:none}
 
 /* palco: um projeto por vez, rolando na vertical */
 .llr__stage{position:relative;flex:1 1 auto;min-width:0;height:100%;overflow:hidden}
@@ -122,7 +123,9 @@
 /* espaço estreito (celular, coluna lateral): rótulo curto e doca vira pontos */
 @container (max-width: 470px){
   .llr__row{gap:12px;padding-inline:14px}
+  /* espaço estreito: "feito por" consome o palco, então entra a versão curta */
   .llr__by-l{display:none}
+  .llr__by-s{display:inline}
   .llr__dock{gap:5px}
   .llr__pip{width:5px;height:5px;border-radius:50%;background:var(--llr-faint)}
   .llr__pip img{display:none}

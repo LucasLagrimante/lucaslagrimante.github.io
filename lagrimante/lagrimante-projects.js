@@ -31,7 +31,6 @@ window.LAGRIMANTE_LOGOS = {
   "ai-radar": "logos/ai-radar.ccd090.png",
   "brawldraft": "logos/brawldraft.88988b.png",
   "eloara": "logos/eloara.e5af24.png",
-  "lagrimante": "logos/lagrimante.c62c50.png",
   "lucasdrone": "logos/lucasdrone.649ffc.png",
   "minhagrana": "logos/minhagrana.c3956b.png",
   "pulse": "logos/pulse.c3dc07.png",

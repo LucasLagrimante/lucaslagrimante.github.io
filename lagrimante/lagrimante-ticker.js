@@ -90,8 +90,10 @@
     by.target = '_blank';
     by.rel = 'noopener noreferrer';
     by.title = 'Lucas Lagrimante — portfólio';
-    // rótulo único: "Lucas". O portfólio é o destino, não um item da lista.
-    by.appendChild(el('span', 'llr__by-l', node.getAttribute('data-label') || 'Lucas'));
+    // "feito por Lucas": o crédito é do autor, e o portfólio é o destino do
+    // link — não um item da lista. A versão curta só aparece em telas estreitas.
+    by.appendChild(el('span', 'llr__by-l', node.getAttribute('data-label') || 'feito por Lucas'));
+    by.appendChild(el('span', 'llr__by-s', node.getAttribute('data-label-short') || 'por Lucas'));
 
     // palco é só visual: duplica a informação da doca, por isso fica fora da árvore de acessibilidade
     var stage = el('div', 'llr__stage');
