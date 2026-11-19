@@ -1,0 +1,147 @@
+/* ==========================================================================
+   lagrimante-ticker.css — assinatura de projetos de Lucas Lagrimante
+   v1.0.0
+
+   Uso:
+     <link rel="stylesheet" href="/lagrimante/lagrimante-ticker.css">
+     <script src="/lagrimante/lagrimante-projects.js"></script>
+     <script src="/lagrimante/lagrimante-ticker.js" defer></script>
+
+   Marcação mínima no HTML (o JS preenche o resto):
+     <nav class="llr" data-lagrimante-ticker="rotativo"
+          data-current="minhagrana" aria-label="Projetos de Lucas Lagrimante"></nav>
+
+   Atributos:
+     data-lagrimante-ticker  obrigatório, valor "rotativo"
+     data-current            slug do site atual (sai da lista) — omitir = detecta pela URL
+     data-label              texto da assinatura (padrão: "Lucas")
+     data-portfolio          destino do link da assinatura (padrão: lagrimante.com.br)
+     data-logo-base          base dos PNGs (padrão: /lagrimante/logos/)
+
+   Tokens sobrescrevíveis pelo site hospedeiro: --llr-accent, --llr-h, --llr-dwell,
+   --llr-logo, --llr-pip, --llr-bg. O componente não define cor de texto: herda
+   `color` do container, então funciona em tema claro e escuro.
+   ========================================================================== */
+
+.llr{
+  /* tokens — o site hospedeiro pode sobrescrever qualquer um */
+  --llr-fg: currentColor;
+  --llr-dim: color-mix(in oklab, currentColor 64%, transparent);
+  --llr-faint: color-mix(in oklab, currentColor 14%, transparent);
+  --llr-line: color-mix(in oklab, currentColor 11%, transparent);
+  --llr-bg: transparent;
+  --llr-accent: #6ee7b7;
+  --llr-h: 40px;
+  --llr-logo: 20px;
+  --llr-pip: 18px;
+  --llr-dwell: 3.4s;           /* tempo que cada projeto fica em foco */
+  --llr-ease: cubic-bezier(.2,.75,.15,1);
+  --llr-in: .68s;              /* entrada e saída do texto trocando */
+  display: block; position: relative; width: 100%;
+  min-height: calc(var(--llr-h) + 2px);   /* reserva espaço antes do JS: sem salto de layout */
+  color: var(--llr-fg); background: var(--llr-bg);
+  border-block: 1px solid var(--llr-line);
+  font: 500 12.5px/1.2 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  container-type: inline-size;              /* responde ao espaço onde foi colocado, não à viewport */
+  contain: layout paint;
+}
+.llr *,.llr *::before,.llr *::after{box-sizing:border-box}
+.llr a{color:inherit;text-decoration:none}
+
+.llr__row{
+  display:flex;align-items:center;gap:16px;height:var(--llr-h);
+  padding-inline:max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+}
+
+/* assinatura fixa à esquerda — é também o link para o portfólio */
+.llr__by{
+  flex:0 0 auto;white-space:nowrap;color:var(--llr-dim);text-decoration:none;
+  font:400 11.5px/1 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  transition:color .18s ease;
+}
+.llr__by:hover,.llr__by:focus-visible{
+  color:var(--llr-fg);
+  text-decoration:underline;text-decoration-color:var(--llr-accent);
+  text-underline-offset:3px;text-decoration-thickness:1px;
+}
+.llr__by:focus-visible{outline:2px solid var(--llr-accent);outline-offset:3px;border-radius:3px}
+.llr__by-s{display:none}
+
+/* palco: um projeto por vez, rolando na vertical */
+.llr__stage{position:relative;flex:1 1 auto;min-width:0;height:100%;overflow:hidden}
+/* máscara curta: o texto nasce e morre dentro do palco, sem vazar para as bordas */
+.llr__stage{
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 26%,#000 74%,transparent 100%);
+          mask-image:linear-gradient(180deg,transparent 0,#000 26%,#000 74%,transparent 100%);
+}
+.llr__card{
+  position:absolute;inset:0;display:flex;align-items:center;gap:9px;white-space:nowrap;
+  transform:translate3d(0,100%,0);opacity:0;pointer-events:none;
+  transition:transform var(--llr-in) var(--llr-ease), opacity calc(var(--llr-in) * .7) ease;
+}
+/* o bloco interno desliza mais que o container: dá a sensação de "peça entrando na fenda" */
+.llr__card > *{transition:transform var(--llr-in) var(--llr-ease);transform:translateY(4px)}
+.llr__card.is-on > *{transform:none}
+.llr__card.is-on{transform:none;opacity:1;pointer-events:auto}
+.llr__card.is-off{transform:translate3d(0,-100%,0);opacity:0}
+.llr__card.is-off > *{transform:translateY(-4px)}
+/* troca instantânea (sem animação) quando a pessoa escolhe pelo hover/foco */
+.llr.is-jump .llr__card{transition-duration:.16s}
+.llr.is-jump .llr__card > *{transition-duration:.16s}
+.llr__logo{width:var(--llr-logo);height:var(--llr-logo);border-radius:5px;flex:none}
+.llr__name{font-weight:600;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.llr__tag{color:var(--llr-dim);font-weight:400;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.llr__card:hover .llr__name{text-decoration:underline;text-decoration-color:var(--llr-accent);text-underline-offset:3px;text-decoration-thickness:1px}
+
+/* doca: os outros projetos em segundo plano */
+.llr__dock{display:flex;align-items:center;gap:7px;margin:0;padding:0;list-style:none;flex:0 0 auto}
+.llr__dock li{display:block}
+.llr__pip{
+  position:relative;display:block;width:var(--llr-pip);height:var(--llr-pip);
+  border-radius:5px;background:var(--llr-faint);
+}
+.llr__pip img{
+  display:block;width:100%;height:100%;border-radius:inherit;
+  filter:grayscale(1);opacity:.42;transition:opacity .25s ease, filter .25s ease;
+}
+.llr__pip:hover img,.llr__pip.is-on img{filter:none;opacity:1}
+.llr__pip:focus-visible{outline:2px solid var(--llr-accent);outline-offset:3px}
+/* barra de progresso: é ela que dita o ritmo (animationend avança o foco) */
+.llr__bar{
+  position:absolute;left:0;right:0;bottom:-7px;height:2px;border-radius:2px;
+  background:var(--llr-accent);transform:scaleX(0);transform-origin:left center;opacity:0;
+}
+.llr__pip.is-on .llr__bar{opacity:1;animation:llr-fill var(--llr-dwell) linear forwards}
+@keyframes llr-fill{to{transform:scaleX(1)}}
+/* pausa quando a pessoa está lendo, navegando por teclado, ou o componente está fora da tela */
+.llr:hover .llr__bar,.llr:focus-within .llr__bar,.llr.is-idle .llr__bar{animation-play-state:paused}
+
+/* espaço médio: some a tagline */
+@container (max-width: 640px){
+  .llr__tag{display:none}
+}
+/* espaço estreito (celular, coluna lateral): rótulo curto e doca vira pontos */
+@container (max-width: 470px){
+  .llr__row{gap:12px;padding-inline:14px}
+  /* espaço estreito: "feito por" consome o palco, então entra a versão curta */
+  .llr__by-l{display:none}
+  .llr__by-s{display:inline}
+  .llr__dock{gap:5px}
+  .llr__pip{width:5px;height:5px;border-radius:50%;background:var(--llr-faint)}
+  .llr__pip img{display:none}
+  .llr__pip.is-on{background:var(--llr-accent)}
+  .llr__pip:focus-visible{outline-offset:2px}
+  .llr__bar{opacity:0 !important}   /* invisível, mas segue rodando para manter o ritmo */
+}
+/* muito estreito: pontos menores para sobrar espaço ao nome */
+@container (max-width: 360px){
+  .llr__row{gap:10px;padding-inline:12px}
+  .llr__dock{gap:4px}
+  .llr__pip{width:4px;height:4px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .llr__card{transition:none}
+  .llr__pip img{transition:none}
+  .llr__pip.is-on .llr__bar{animation:none;transform:scaleX(1)}   /* sem rotação automática */
+}
