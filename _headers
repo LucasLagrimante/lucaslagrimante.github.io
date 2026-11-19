@@ -1,8 +1,24 @@
 # Assets da assinatura de projetos (ticker).
 #
-# Os nomes carregam hash do conteudo (ex.: eloara.e5af24.png), entao o arquivo
-# nunca muda com o mesmo nome: cache de 1 ano e seguro e evita buscar de novo a
-# cada visita. Publicado por scripts/publish_assets.py.
-/lagrimante/*
+# Duas politicas, porque os arquivos tem naturezas diferentes:
+#
+# 1. Logos (/lagrimante/logos/*.png): o nome carrega hash do conteudo
+#    (ex.: eloara.e5af24.png), entao o arquivo nunca muda com o mesmo nome.
+#    Cache de 1 ano e immutable: atualizar um logo muda o nome, logo a URL, e
+#    o cache nunca serve desenho antigo. Publicado por scripts/publish_assets.py.
+/lagrimante/logos/*
   Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# 2. Componente (ticker.js/css/projects.js): nome FIXO, porque e o que os 7
+#    sites referenciam no HTML. Marcar immutable aqui congelaria o componente no
+#    browser do visitante por um ano -- bug novo nunca chegaria em quem ja
+#    visitou. Por isso 5 minutos de cache com revalidacao: barato no dia a dia,
+#    e uma correcao propaga em minutos.
+/lagrimante/*.js
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+/lagrimante/*.css
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
   Access-Control-Allow-Origin: *
