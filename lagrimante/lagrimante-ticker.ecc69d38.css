@@ -100,8 +100,12 @@
   position:relative;display:block;width:var(--llr-pip);height:var(--llr-pip);
   border-radius:5px;background:var(--llr-faint);
 }
+/* O img usa tamanho explicito, nao height:100%. Com height:100% a altura
+   resolve contra o pai, e um host com line-height generoso no body (ex.
+   17px/1.65) deixa a caixa ambigua: o pip mede 18x24 e a imagem colapsa
+   para altura 0 -- os icones somem sem erro de rede nem de console. */
 .llr__pip img{
-  display:block;width:100%;height:100%;border-radius:inherit;
+  display:block;width:var(--llr-pip);height:var(--llr-pip);border-radius:inherit;
   filter:grayscale(1);opacity:.42;transition:opacity .25s ease, filter .25s ease;
 }
 .llr__pip:hover img,.llr__pip.is-on img{filter:none;opacity:1}

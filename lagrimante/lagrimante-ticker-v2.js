@@ -12,7 +12,7 @@
   var base = (s && s.src ? s.src : "").replace(/lagrimante-ticker-v2\.js(\?.*)?$/, "");
   if (!base) return;
 
-  var fila = ["lagrimante-projects.8a3d4c6f.js", "lagrimante-ticker.e9af983d.js"];
+  var fila = ["lagrimante-projects.8a3d4c6f.js", "lagrimante-ticker.8f281770.js"];
   (function proximo() {
     if (!fila.length) return;
     var el = document.createElement("script");
