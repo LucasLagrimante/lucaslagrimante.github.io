@@ -43,6 +43,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="/lagrimante/lagrimante-ticker-v2.css">
+<script src="/lagrimante/lagrimante-ticker-v2.js" defer></script>
+
 </head>
 <body>
 
@@ -56,7 +59,6 @@
   <div class="topbar-actions">
     <nav class="topnav" aria-label="Primary navigation">
       <a href="#about" data-i18n="nav.about">About</a>
-      <a href="#domains" data-i18n="nav.domains">Systems</a>
       <a href="#experience" data-i18n="nav.experience">Experience</a>
       <a href="#education" data-i18n="nav.education">Education</a>
       <a href="#contact" data-i18n="nav.contact">Contact</a>
@@ -66,6 +68,12 @@
     </button>
   </div>
 </header>
+
+<div class="lagrimante-slot portfolio-ticker">
+  <nav class="llr" data-lagrimante-ticker="rotativo"
+       data-logo-base="https://lagrimante.com.br/lagrimante/logos/"
+       aria-label="Projects built by Lucas Lagrimante"></nav>
+</div>
 
 <main>
 
@@ -156,185 +164,11 @@
     </div>
   </section>
 
-  <section id="domains" class="section reveal">
-    <div class="section-heading">
-      <p class="eyebrow" data-i18n="domains.eyebrow">Live systems / Domains</p>
-      <span class="section-index">04 — 09</span>
-    </div>
-    <div class="domains-intro">
-      <h2 class="section-title" data-i18n="domains.title">One domain,<br>several systems.</h2>
-      <p data-i18n="domains.intro">Every product I ship lives under lagrimante.com.br. These are the live entry points.</p>
-    </div>
-    <div class="domain-grid">
-      <a class="domain-card domain-minhagrana" href="https://minhagrana.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">01 / FINANCE</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="M,I,N,H,A,G,R,A,N,A" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/minhagrana.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.minhagrana.title">MinhaGrana</h3>
-          <p data-i18n="domains.minhagrana.body">Investimentos, gestão de portfólio e análise com IA em uma experiência coerente para web e mobile.</p>
-          <span class="domain-link">
-            <span class="domain-host">minhagrana.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-sharenote" href="https://sharenote.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">02 / PRODUCTIVITY</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="S,N,A,R,E,N,O,T,E" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/sharenote.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.sharenote.title">ShareNote</h3>
-          <p data-i18n="domains.sharenote.body">Notas compartilhadas onde o conteúdo vira decisão coletiva, não mais um documento perdido na caixa de entrada.</p>
-          <span class="domain-link">
-            <span class="domain-host">sharenote.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-card-pulse" href="https://pulse.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">03 / WINDOWS OBSERVABILITY</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="P,U,L,S,E" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/pulse.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.pulse.title">Pulse</h3>
-          <p data-i18n="domains.pulse.body">Central de observabilidade e diagnóstico para Windows 11: CPU, memória, disco, GPU, inicialização, serviços e cotas de IA em uma interface única. 100% local, sem conta e sem nuvem.</p>
-          <span class="domain-link">
-            <span class="domain-host">pulse.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-eloara" href="https://eloara.lagrimante.com.br/" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">04 / HEALTH</span>
-          <span class="domain-state">IN DEVELOPMENT</span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/eloara.svg" alt="" loading="lazy" decoding="async" width="256" height="256">
-        </div>
-        <div class="domain-body">
-          <h3>Eloara</h3>
-          <p lang="pt-BR">Plataforma de saúde multiprofissional em desenvolvimento, com foco inicial em piloto médico.</p>
-          <span class="domain-link">
-            <span class="domain-host">eloara.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-airadar" href="https://ai-radar.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">05 / AI INTELLIGENCE</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="A,I,R,A,D,A,R" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/ai-radar.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.airadar.title">AI Radar</h3>
-          <p data-i18n="domains.airadar.body">Live dashboard tracking AI models, their prices and intelligence scores across OpenRouter, models.dev and Artificial Analysis.</p>
-          <span class="domain-link">
-            <span class="domain-host">ai-radar.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-drone" href="https://lucasdrone.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">06 / AERIAL VIDEO</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="L,U,C,A,S,D,R,O,N,E,J,F" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/lucasdrone.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.drone.title">Lucas Drone JF</h3>
-          <p data-i18n="domains.drone.body">Filmagem aérea de eventos em Juiz de Fora e região, com certificado ANAC para voo comercial. A lembrança do seu evento gravada de um ângulo alto.</p>
-          <span class="domain-link">
-            <span class="domain-host">lucasdrone.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-rivals" href="https://rivals.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">07 / COACHING</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="M,R,V,S" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/rivals.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.rivals.title">Marvel Rivals Coach</h3>
-          <p data-i18n="domains.rivals.body">Guides de coaching que transformam o tier list em decisão: prioridade de habilidade, matchup, team-up e o custo de trocar a composição.</p>
-          <span class="domain-link">
-            <span class="domain-host">rivals.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-acervogamer" href="https://acervo.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">08 / GAMING</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="A,C,E,R,V,O,G,A,M,E,R" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/acervogamer.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.acervogamer.title">Acervo Gamer</h3>
-          <p data-i18n="domains.acervogamer.body">A personal game library with a searchable collection, 3D coverflow and a constellation map connecting games, platforms and genres.</p>
-          <span class="domain-link">
-            <span class="domain-host">acervo.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-      <a class="domain-card domain-vagacheck" href="https://vagacheck.lagrimante.com.br" target="_blank" rel="noopener">
-        <div class="domain-topline">
-          <span class="domain-index">09 / CAREER</span>
-          <span class="domain-state"><i aria-hidden="true"></i>LIVE<em class="domain-initials" data-initials="V,A,G,A,C,H,E,C,K" aria-hidden="true"></em></span>
-        </div>
-        <div class="domain-visual" aria-hidden="true">
-          <img class="domain-logo" src="assets/projects/vagacheck.png" alt="" loading="lazy" decoding="async" width="256" height="256">
-          <span class="domain-pulse"></span>
-        </div>
-        <div class="domain-body">
-          <h3 data-i18n="domains.vagacheck.title">VagaCheck</h3>
-          <p data-i18n="domains.vagacheck.body">Job radar with explainable fit: daily ranking, application funnel, interview briefing and a per-job CV in PT/EN — generated from your profile, no invented facts.</p>
-          <span class="domain-link">
-            <span class="domain-host">vagacheck.lagrimante.com.br</span>
-            <span class="domain-arrow" aria-hidden="true">↗</span>
-          </span>
-        </div>
-      </a>
-    </div>
-    <p class="domains-foot" data-i18n="domains.foot">All systems run on Cloudflare.</p>
-  </section>
 
   <section id="experience" class="section reveal">
     <div class="section-heading">
       <p class="eyebrow" data-i18n="exp.eyebrow">Experience / Timeline</p>
-      <span class="section-index">05 — 08</span>
+      <span class="section-index">04 — 07</span>
     </div>
     <ol class="timeline">
       <li class="timeline-item">
@@ -363,7 +197,7 @@
   <section id="education" class="section reveal">
     <div class="section-heading">
       <p class="eyebrow" data-i18n="education.eyebrow">Education / Continuous learning</p>
-      <span class="section-index">06 — 08</span>
+      <span class="section-index">05 — 07</span>
     </div>
     <div class="education-intro">
       <h2 class="section-title" data-i18n="education.title">Strong foundations.<br>Always in motion.</h2>
@@ -412,7 +246,7 @@
   <section id="stack" class="section reveal">
     <div class="section-heading">
       <p class="eyebrow" data-i18n="stack.eyebrow">Capabilities / Toolkit</p>
-      <span class="section-index">07 — 08</span>
+      <span class="section-index">06 — 07</span>
     </div>
     <h2 class="section-title stack-title" data-i18n="stack.title">The right layer<br>for every problem.</h2>
     <div class="capability-grid">
@@ -426,7 +260,7 @@
   <section id="contact" class="section reveal contact">
     <div class="section-heading">
       <p class="eyebrow" data-i18n="contact.eyebrow">Contact / Open channel</p>
-      <span class="section-index">08 — 08</span>
+      <span class="section-index">07 — 07</span>
     </div>
     <p class="contact-overline" data-i18n="contact.overline">Have a difficult system to untangle?</p>
     <a class="contact-email" href="mailto:llagrimante@gmail.com"><span data-i18n="contact.title">Let's build<br>what comes next.</span><i aria-hidden="true">↗</i></a>

@@ -5,7 +5,6 @@
     en: {
       "skip": "Skip to content",
       "nav.about": "About",
-      "nav.domains": "Systems",
       "nav.experience": "Experience",
       "nav.education": "Education",
       "nav.contact": "Contact",
@@ -29,26 +28,6 @@
       "work.migration.body": "A 45-step ETL framework across 13+ systems, now coordinated with AI to catch inconsistencies earlier and turn onboarding from weeks into days.",
       "work.product.title": "A financial product built around better decisions.",
       "work.product.body": "MinhaGrana brings investments, portfolio management and AI analysis into one coherent experience across web and mobile.",
-      "domains.eyebrow": "Live systems / Domains",
-      "domains.title": "One domain,<br>several systems.",
-      "domains.intro": "Every product I ship lives under lagrimante.com.br. These are the live entry points.",
-      "domains.rivals.title": "Marvel Rivals Coach",
-      "domains.rivals.body": "Coaching guides that turn the tier list into a decision: ability priority, matchup, team-up and the real cost of swapping your composition.",
-      "domains.minhagrana.title": "MinhaGrana",
-      "domains.minhagrana.body": "Investments, portfolio management and AI analysis in one coherent experience across web and mobile.",
-      "domains.sharenote.title": "ShareNote",
-      "domains.sharenote.body": "Shared notes where the content becomes a collective decision instead of one more document lost in the inbox.",
-      "domains.drone.title": "Lucas Drone JF",
-      "domains.drone.body": "Aerial filming for events in Juiz de Fora and the region, ANAC-certified for commercial flight. Your event remembered from an angle above.",
-      "domains.airadar.title": "AI Radar",
-      "domains.airadar.body": "Live dashboard tracking AI models, their prices and intelligence scores across OpenRouter, models.dev and Artificial Analysis.",
-      "domains.pulse.title": "Pulse",
-      "domains.pulse.body": "Windows 11 observability and diagnostics hub: CPU, memory, disk, GPU, startup, services and AI quotas in a single interface. Fully local, no account, no cloud.",
-      "domains.vagacheck.title": "VagaCheck",
-      "domains.vagacheck.body": "Job radar with explainable fit: daily ranking, application funnel, interview briefing and a per-job CV in PT/EN — generated from your profile, no invented facts.",
-      "domains.acervogamer.title": "Acervo Gamer",
-      "domains.acervogamer.body": "A personal game library with a searchable collection, 3D coverflow and a constellation map connecting games, platforms and genres.",
-      "domains.foot": "All systems run on Cloudflare.",
       "exp.eyebrow": "Experience / Timeline",
       "exp.minhagrana": "Fintech SaaS for investment management — React 19, Supabase Edge Functions, Capacitor mobile and Gemini AI portfolio analysis.",
       "exp.coord": "AI-driven ETL coordination with Claude AI + MCPs. Error rate cut from 15–20% to 2–4%; onboarding time from weeks to days.",
@@ -80,7 +59,6 @@
     pt: {
       "skip": "Pular para o conteúdo",
       "nav.about": "Sobre",
-      "nav.domains": "Sistemas",
       "nav.experience": "Experiência",
       "nav.education": "Formação",
       "nav.contact": "Contato",
@@ -104,26 +82,6 @@
       "work.migration.body": "Um framework ETL de 45 etapas entre 13+ sistemas, agora coordenado com IA para encontrar inconsistências mais cedo e reduzir o onboarding de semanas para dias.",
       "work.product.title": "Um produto financeiro pensado para decisões melhores.",
       "work.product.body": "O MinhaGrana reúne investimentos, gestão de portfólio e análise com IA em uma experiência coerente para web e mobile.",
-      "domains.eyebrow": "Sistemas no ar / Domínios",
-      "domains.title": "Um domínio,<br>vários sistemas.",
-      "domains.intro": "Cada produto que eu entrego vive sob lagrimante.com.br. Estes são os pontos de entrada no ar.",
-      "domains.rivals.title": "Marvel Rivals Coach",
-      "domains.rivals.body": "Guias de coaching que transformam o tier list em decisão: prioridade de habilidade, matchup, team-up e o custo de trocar a composição.",
-      "domains.minhagrana.title": "MinhaGrana",
-      "domains.minhagrana.body": "Investimentos, gestão de portfólio e análise com IA em uma experiência coerente para web e mobile.",
-      "domains.sharenote.title": "ShareNote",
-      "domains.sharenote.body": "Notas compartilhadas onde o conteúdo vira decisão coletiva, não mais um documento perdido na caixa de entrada.",
-      "domains.drone.title": "Lucas Drone JF",
-      "domains.drone.body": "Filmagem aérea de eventos em Juiz de Fora e região, com certificado ANAC para voo comercial. A lembrança do seu evento gravada de um ângulo alto.",
-      "domains.airadar.title": "AI Radar",
-      "domains.airadar.body": "Dashboard ao vivo que rastreia modelos de IA, seus preços e scores de inteligência entre OpenRouter, models.dev e Artificial Analysis.",
-      "domains.pulse.title": "Pulse",
-      "domains.pulse.body": "Central de observabilidade e diagnóstico para Windows 11: CPU, memória, disco, GPU, inicialização, serviços e cotas de IA em uma interface única. 100% local, sem conta e sem nuvem.",
-      "domains.vagacheck.title": "VagaCheck",
-      "domains.vagacheck.body": "Radar de vagas com fit explicável: ranking diário, funil de candidaturas, briefing de entrevista e currículo em PT/EN por vaga — gerado do seu perfil, sem fato inventado.",
-      "domains.acervogamer.title": "Acervo Gamer",
-      "domains.acervogamer.body": "Biblioteca pessoal de jogos com coleção pesquisável, capas em carrossel 3D e um mapa em constelação que conecta jogos, plataformas e gêneros.",
-      "domains.foot": "Todos os sistemas rodam na Cloudflare.",
       "exp.eyebrow": "Experiência / Linha do tempo",
       "exp.minhagrana": "SaaS fintech para gestão de investimentos — React 19, Supabase Edge Functions, mobile com Capacitor e análise de portfólio com Gemini AI.",
       "exp.coord": "Coordenação de ETL com IA usando Claude AI + MCPs. Taxa de erro reduzida de 15–20% para 2–4%; onboarding de semanas para dias.",
@@ -172,6 +130,20 @@
     document.title = lang === "pt"
       ? "Lucas Lagrimante — Engenheiro de Software Sênior"
       : "Lucas Lagrimante — Senior Software Engineer";
+    // A barra de projetos vem de um componente externo, com rotulo proprio.
+    // Ela nao usa data-i18n, entao acompanha o idioma aqui: nos atributos
+    // (para uma montagem futura) e no DOM (para a montagem ja feita).
+    var tickerNav = document.querySelector(".lagrimante-slot .llr");
+    var byLong = lang === "pt" ? "feito por Lucas" : "built by Lucas";
+    var byShort = lang === "pt" ? "por Lucas" : "by Lucas";
+    if (tickerNav) {
+      tickerNav.setAttribute("data-label", byLong);
+      tickerNav.setAttribute("data-label-short", byShort);
+      var elLong = tickerNav.querySelector(".llr__by-l");
+      var elShort = tickerNav.querySelector(".llr__by-s");
+      if (elLong) elLong.textContent = byLong;
+      if (elShort) elShort.textContent = byShort;
+    }
     localStorage.setItem(STORAGE_KEY, lang);
   }
 
@@ -199,57 +171,4 @@
     revealObserver.observe(el);
   });
 
-  // Iniciais piscando nos cards de sistema: cada letra do nome aparece por
-  // instantes e some, decodificando o nome do produto atrás do rótulo LIVE.
-  // Pausa em hover para o texto ficar legível enquanto se lê o card.
-  var TYPE_SPEED = 190;
-  var TYPE_HOLD = 1100;
-
-  document.querySelectorAll(".domain-initials").forEach(function (el) {
-    var letters = (el.getAttribute("data-initials") || "").split("");
-    if (!letters.length) return;
-
-    var index = 0;
-    var timer = null;
-
-    function clearTyping() {
-      if (timer) clearTimeout(timer);
-      timer = null;
-      el.classList.remove("is-typing");
-      el.removeAttribute("data-letter");
-    }
-
-    function step() {
-      // Omite a letra repetida para o piscar ter cadência natural.
-      while (letters[index] === letters[(index + 1) % letters.length] && letters.length > 1) {
-        index = (index + 1) % letters.length;
-      }
-      el.setAttribute("data-letter", letters[index]);
-      el.classList.add("is-typing");
-      index = (index + 1) % letters.length;
-      timer = setTimeout(function () {
-        el.classList.remove("is-typing");
-        timer = setTimeout(step, TYPE_HOLD);
-      }, TYPE_SPEED);
-    }
-
-    function start() {
-      if (timer || el.matches(":hover")) return;
-      index = 0;
-      step();
-    }
-
-    var card = el.closest(".domain-card");
-    if (card) {
-      card.addEventListener("mouseenter", clearTyping);
-      card.addEventListener("mouseleave", start);
-    }
-
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) clearTyping();
-    });
-
-    // Cada card começa fora de fase, senão os quatro piscam juntos.
-    setTimeout(start, 400 + Math.random() * 1400);
-  });
 })();

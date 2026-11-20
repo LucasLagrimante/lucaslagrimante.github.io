@@ -203,15 +203,17 @@ main { position: relative; z-index: 1; }
 }
 
 .hero {
-  min-height: 100vh;
-  min-height: 100svh;
+  /* desconta header fixo (82px) + barra de projetos (42px): o hero comeca
+     em y=124, entao a altura util e a viewport menos esse deslocamento */
+  min-height: calc(100vh - 124px);
+  min-height: calc(100svh - 124px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.86fr);
   align-items: center;
   gap: clamp(2rem, 5vw, 5.5rem);
   position: relative;
-  padding-top: 8rem;
-  padding-bottom: 7.5rem;
+  padding-top: 3rem;
+  padding-bottom: 4rem;
 }
 
 .hero-copy { position: relative; z-index: 2; }
@@ -616,179 +618,6 @@ main { position: relative; z-index: 1; }
 .case-body ul { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
 .case-body li { color: var(--muted); border: 1px solid var(--border); padding: 0.38rem 0.6rem; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; }
 
-/* ── Live systems / Domains ─────────────────────────────────────────────── */
-
-.domains-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-  gap: clamp(2.5rem, 8vw, 8rem);
-  align-items: end;
-  margin-bottom: clamp(2rem, 5vw, 3.5rem);
-}
-
-.domains-intro p { color: var(--muted); font-size: 0.95rem; max-width: 48ch; margin: 0; }
-
-.domain-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 0.85rem;
-}
-
-.domain-card {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  overflow: hidden;
-  transition: border-color 220ms ease, transform 220ms ease;
-}
-
-.domain-card:hover,
-.domain-card:focus-visible { border-color: rgba(200, 255, 98, 0.5); transform: translateY(-4px); }
-
-.domain-topline {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid var(--border);
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.54rem;
-  letter-spacing: 0.08em;
-}
-
-.domain-state { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--accent); flex: none; }
-
-/* O ponto pulsante é o mesmo sinal de "disponível" usado no hero. */
-.domain-state i {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0.6rem rgba(200, 255, 98, 0.7);
-  animation: domain-live 2.4s ease-in-out infinite;
-}
-
-@keyframes domain-live {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
-
-/* Iniciais que correm atrás do rótulo LIVE: decodifica o nome do projeto.
-   A troca de letra é feita em JS (main.js) — `content` animado em @keyframes
-   não é confiável entre navegadores. */
-.domain-initials {
-  font-style: normal;
-  position: relative;
-  display: inline-flex;
-  margin-left: 0.5rem;
-  padding-left: 0.9rem;
-  color: var(--accent);
-  letter-spacing: 0.12em;
-  min-width: 1.6em;
-}
-
-.domain-initials::after {
-  content: attr(data-letter);
-  position: absolute;
-  left: 0.9rem;
-  top: 0;
-  color: var(--accent);
-  opacity: 0;
-  transition: opacity 90ms steps(1, end);
-}
-
-.domain-initials.is-typing::after { opacity: 1; }
-
-.domain-visual {
-  position: relative;
-  height: clamp(120px, 13vw, 140px);
-  display: grid;
-  place-items: center;
-  padding: 1.25rem;
-  overflow: hidden;
-  border-bottom: 1px solid var(--border);
-  background:
-    linear-gradient(rgba(240,244,237,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(240,244,237,0.035) 1px, transparent 1px),
-    #0b0e0c;
-  background-size: 24px 24px;
-}
-
-/* Todos os logos saem de `scripts/normalize_project_logos.mjs` na MESMA caixa
-   256x256, recortados pela tinta visível sobre o card e escalados para a mesma
-   área óptica. Então aqui não há upscale (a causa do pixelado), nem max-height
-   por forma: o CSS só reduz a caixa e todos parecem do mesmo tamanho. */
-.domain-logo {
-  display: block;
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 1.1rem rgba(200, 255, 98, 0.22));
-  transition: transform 260ms ease, filter 260ms ease;
-}
-
-.domain-card:hover .domain-logo,
-.domain-card:focus-visible .domain-logo { transform: scale(1.08); filter: drop-shadow(0 0 1.5rem rgba(200, 255, 98, 0.4)); }
-
-/* Anel que se expande a partir do logo — ecoa o mapa de partículas do hero.
-   Dimensionado em relação ao logo, senão o anel não fica centrado no wordmark
-   horizontal e lê como desalinhado. */
-.domain-pulse {
-  position: absolute;
-  width: clamp(3.6rem, 5.5vw, 4.6rem);
-  aspect-ratio: 1;
-  border: 1px solid rgba(200, 255, 98, 0.32);
-  border-radius: 50%;
-  animation: domain-ring 3.4s ease-out infinite;
-}
-
-@keyframes domain-ring {
-  0% { transform: scale(0.55); opacity: 0.9; }
-  100% { transform: scale(1.75); opacity: 0; }
-}
-
-.domain-body { padding: clamp(1rem, 2vw, 1.35rem); display: flex; flex-direction: column; flex: 1; }
-.domain-body h3 { font-family: var(--font-display); font-size: clamp(1.1rem, 1.5vw, 1.35rem); line-height: 1.08; letter-spacing: -0.03em; margin: 0; }
-.domain-body p { color: var(--muted); font-size: 0.8rem; line-height: 1.5; max-width: 40ch; margin: 0.7rem 0 1.1rem; }
-
-.domain-link {
-  margin-top: auto;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.03em;
-  color: var(--muted);
-  transition: color 180ms ease;
-}
-
-.domain-host { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.domain-arrow { flex: none; transition: transform 220ms ease; }
-
-.domain-card:hover .domain-link,
-.domain-card:focus-visible .domain-link { color: var(--accent); }
-.domain-card:hover .domain-arrow,
-.domain-card:focus-visible .domain-arrow { transform: translate(3px, -3px); }
-
-.domains-foot {
-  margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.05em;
-}
-
-.domains-foot span { color: var(--accent); }
 
 .timeline {
   list-style: none;
@@ -1035,7 +864,6 @@ main { position: relative; z-index: 1; }
   .metrics article:nth-child(-n + 2) { border-bottom: 1px solid var(--border); }
   .case-list { grid-template-columns: 1fr; }
   .case-visual { height: clamp(290px, 48vw, 420px); }
-  .domain-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .capability-grid { grid-template-columns: repeat(2, 1fr); }
   .capability-grid article:nth-child(2) { border-right: 0; }
   .capability-grid article:nth-child(-n + 2) { border-bottom: 1px solid var(--border); }
@@ -1066,13 +894,9 @@ main { position: relative; z-index: 1; }
   .graph-stage { aspect-ratio: 1.4 / 1; max-height: min(34svh, 280px); }
   .graph-head span:last-child { display: none; }
 
-  .domain-topline { gap: 0.35rem; padding-inline: 0.55rem; font-size: 0.48rem; }
-  .domain-index { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .domain-initials { display: none; }
 
   .about-grid,
   .work-intro,
-  .domains-intro,
   .education-intro { grid-template-columns: 1fr; gap: 1.8rem; }
   .about-copy > p:last-child { margin-top: 1rem; }
   .metrics { grid-template-columns: 1fr; }
@@ -1100,3 +924,16 @@ main { position: relative; z-index: 1; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .status-dot, .scroll-cue i, .flow-line i, .portfolio-orbit { animation: none; }
 }
+
+/* ── Barra de projetos (assinatura compartilhada) ─────────────────────────
+   O topbar é fixo e cobre 82px. A barra entra logo abaixo dele, no fluxo,
+   e o hero desconta a altura para não estourar a primeira tela. */
+.portfolio-ticker {
+  padding-top: 82px;
+  max-width: 1240px;
+  margin: 0 auto;
+  /* mesmo recuo do .section: o rotulo da barra cai na mesma coluna do hero */
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+/* o recuo agora vem do container do site, nao do componente */
+.portfolio-ticker .llr__row { padding-inline: 0; }
